@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -36,7 +37,11 @@ public class FilmController {
         if (!validateReleaseDate(film.getReleaseDate())) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
         }
-        films.replace(film.getId(), film);
+        if (films.containsKey(film.getId())) {
+            films.replace(film.getId(), film);
+        } else {
+            throw new FilmNotFoundException();
+        }
         log.info("Выполнен запрос PUT /film.");
         return film;
     }
