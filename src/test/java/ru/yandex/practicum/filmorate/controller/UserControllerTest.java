@@ -20,7 +20,7 @@ class UserControllerTest extends ControllerTest {
     @Test
     public void addUserTest() throws Exception {
         // Подготовка
-        String urlString = "http://localhost:8080/user";
+        String urlString = "http://localhost:8080/users";
         User expectedUser = User
                 .builder()
                 .email("email@yandex.ru")
@@ -41,7 +41,7 @@ class UserControllerTest extends ControllerTest {
     @Test
     public void updateUserTest() throws Exception {
         // Подготовка
-        String urlString = "http://localhost:8080/user";
+        String urlString = "http://localhost:8080/users";
         User user = User
                 .builder()
                 .email("email@yandex.ru")

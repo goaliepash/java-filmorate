@@ -20,7 +20,7 @@ class FilmControllerTest extends ControllerTest {
     @Test
     public void addFilmTest() throws Exception {
         // Подготовка
-        String urlString = "/film";
+        String urlString = "/films";
         Film expectedFilm = Film
                 .builder()
                 .name("Pulp Fiction")
@@ -41,7 +41,7 @@ class FilmControllerTest extends ControllerTest {
     @Test
     public void updateFilmTest() throws Exception {
         // Подготовка
-        String urlString = "/film";
+        String urlString = "/films";
         Film film = Film
                 .builder()
                 .name("Pulp Fiction")

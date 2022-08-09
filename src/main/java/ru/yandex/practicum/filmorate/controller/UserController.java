@@ -18,7 +18,7 @@ public class UserController {
 
     private int currentIdentifier = 0;
 
-    @PostMapping(value = "/user")
+    @PostMapping(value = "/users")
     public User add(@Valid @RequestBody User user) {
         user.setId(++currentIdentifier);
         if (user.getName().isBlank()) {
@@ -29,7 +29,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping(value = "/user")
+    @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());

@@ -20,7 +20,7 @@ public class FilmController {
 
     private int currentIdentifier = 0;
 
-    @PostMapping(value = "/film")
+    @PostMapping(value = "/films")
     public Film add(@Valid @RequestBody Film film) {
         if (!validateReleaseDate(film.getReleaseDate())) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
@@ -31,7 +31,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping(value = "/film")
+    @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) {
         if (!validateReleaseDate(film.getReleaseDate())) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
