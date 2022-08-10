@@ -17,15 +17,15 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
 
-    private final Map<Integer, Film> films = new LinkedHashMap<>();
+    private static final LocalDate CINEMATOGRAPHY_DATE = LocalDate.of(1895, 12, 28);
+
+    private final Map<Long, Film> films = new LinkedHashMap<>();
 
     private int currentIdentifier = 0;
 
     @PostMapping(value = "/films")
     public Film add(@Valid @RequestBody Film film) {
-        if (!validateReleaseDate(film.getReleaseDate())) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
-        }
+        validateReleaseDate(film.getReleaseDate());
         film.setId(++currentIdentifier);
         films.put(film.getId(), film);
         log.info("Выполнен запрос POST /film");
@@ -34,9 +34,7 @@ public class FilmController {
 
     @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) {
-        if (!validateReleaseDate(film.getReleaseDate())) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
-        }
+        validateReleaseDate(film.getReleaseDate());
         if (films.containsKey(film.getId())) {
             films.replace(film.getId(), film);
         } else {
@@ -52,7 +50,9 @@ public class FilmController {
         return new ArrayList<>(films.values());
     }
 
-    private boolean validateReleaseDate(LocalDate releaseDate) {
-        return releaseDate.isAfter(LocalDate.of(1895, 12, 28));
+    private void validateReleaseDate(LocalDate releaseDate) {
+        if (!releaseDate.isAfter(CINEMATOGRAPHY_DATE)) {
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
+        }
     }
 }

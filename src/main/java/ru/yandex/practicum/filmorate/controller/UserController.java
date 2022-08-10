@@ -15,16 +15,14 @@ import java.util.Map;
 @Slf4j
 public class UserController {
 
-    private final Map<Integer, User> users = new LinkedHashMap<>();
+    private final Map<Long, User> users = new LinkedHashMap<>();
 
     private int currentIdentifier = 0;
 
     @PostMapping(value = "/users")
     public User add(@Valid @RequestBody User user) {
         user.setId(++currentIdentifier);
-        if (user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        setUserName(user);
         users.put(user.getId(), user);
         log.info("Выполнен запрос POST /user");
         return user;
@@ -32,9 +30,7 @@ public class UserController {
 
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
-        if (user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        setUserName(user);
         if (users.containsKey(user.getId())) {
             users.replace(user.getId(), user);
         } else {
@@ -49,5 +45,11 @@ public class UserController {
     public List<User> getAll() {
         log.info("Выполнен запрос GET /users");
         return new ArrayList<>(users.values());
+    }
+
+    private void setUserName(User user) {
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }
