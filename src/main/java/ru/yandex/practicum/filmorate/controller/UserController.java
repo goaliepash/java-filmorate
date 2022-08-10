@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -48,7 +45,7 @@ public class UserController {
     }
 
     private void setUserName(User user) {
-        if (user.getName().isBlank()) {
+        if (!Objects.isNull(user.getName()) && user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }
