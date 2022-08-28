@@ -48,16 +48,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User get(long id) {
+    public Optional<User> get(long id) {
         if (users.containsKey(id)) {
-            return users.get(id);
+            return Optional.of(users.get(id));
         } else {
-            throw new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", id));
+            return Optional.empty();
+            // throw new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", id));
         }
     }
 
     private void setUserName(User user) {
-        if (!Objects.isNull(user.getName()) && user.getName().isBlank()) {
+        if (Objects.isNull(user.getName()) || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }

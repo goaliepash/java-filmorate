@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -34,42 +35,46 @@ public class UserService {
     }
 
     public User get(long id) {
-        return storage.get(id);
+        return getUser(id);
     }
 
     public User addFriend(long id, long friendId) {
-        User user = storage.get(id);
-        User friend = storage.get(friendId);
+        User user = getUser(id);
+        User friend = getUser(friendId);
         user.addFriend(friendId);
         friend.addFriend(id);
         return user;
     }
 
     public User deleteFriend(long id, long friendId) {
-        User user = storage.get(id);
-        User otherUser = storage.get(id);
+        User user = getUser(id);
+        User otherUser = getUser(friendId);
         user.deleteFriend(friendId);
         otherUser.deleteFriend(id);
         return user;
     }
 
     public List<User> getFriends(long id) {
-        User user = storage.get(id);
+        User user = getUser(id);
         return user
                 .getFriends()
                 .stream()
-                .map(storage::get)
+                .map(this::getUser)
                 .collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(long id, long otherId) {
-        User user = storage.get(id);
-        User otherUser = storage.get(otherId);
+        User user = getUser(id);
+        User otherUser = getUser(otherId);
         Set<Long> intersection = new HashSet<>(user.getFriends());
         intersection.retainAll(otherUser.getFriends());
         return intersection
                 .stream()
-                .map(storage::get)
+                .map(this::getUser)
                 .collect(Collectors.toList());
+    }
+
+    private User getUser(long id) {
+        return storage.get(id).orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", id)));
     }
 }
