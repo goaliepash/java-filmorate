@@ -53,8 +53,12 @@ public class InMemoryUserStorage implements UserStorage {
             return Optional.of(users.get(id));
         } else {
             return Optional.empty();
-            // throw new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", id));
         }
+    }
+
+    @Override
+    public boolean contains(long id) {
+        return users.containsKey(id);
     }
 
     private void setUserName(User user) {

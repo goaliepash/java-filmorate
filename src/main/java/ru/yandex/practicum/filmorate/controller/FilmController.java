@@ -12,7 +12,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/films")
@@ -68,10 +67,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(required = false, name = "count") @Positive Integer count) {
-        if (Objects.isNull(count) || count == 0) {
-            count = 10;
-        }
+    public List<Film> getPopularFilms(@RequestParam(required = false, name = "count", defaultValue = "10") @Positive int count) {
         log.info("Выполнен запрос GET /films/popular?count={}", count);
         return service.getPopularFilms(count);
     }
