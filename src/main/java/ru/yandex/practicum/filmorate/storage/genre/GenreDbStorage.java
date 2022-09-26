@@ -5,9 +5,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class GenreDbStorage implements GenreStorage {
@@ -38,5 +36,18 @@ public class GenreDbStorage implements GenreStorage {
         } else {
             return Optional.empty();
         }
+    }
+
+    public Set<Genre> getByFilmId(long filmId) {
+        Set<Genre> genres = new HashSet<>();
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("SELECT * FROM films_genres WHERE film_id = ?;", filmId);
+        while (sqlRowSet.next()) {
+            long genreId = sqlRowSet.getInt("genre_id");
+            SqlRowSet sqlRowSetGenres = jdbcTemplate.queryForRowSet("SELECT name FROM genres WHERE id = ?;", genreId);
+            sqlRowSetGenres.next();
+            Genre genre = new Genre(genreId, sqlRowSetGenres.getString("name"));
+            genres.add(genre);
+        }
+        return genres;
     }
 }

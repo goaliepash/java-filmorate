@@ -14,20 +14,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int currentIdentifier = 0;
 
     @Override
-    public Film add(Film film) {
+    public void add(Film film) {
         film.setId(++currentIdentifier);
         films.put(film.getId(), film);
-        return film;
     }
 
     @Override
-    public Film update(Film film) {
+    public void update(Film film) {
         if (films.containsKey(film.getId())) {
             films.replace(film.getId(), film);
         } else {
             throw new FilmNotFoundException(String.format("Фильм с идентификатором %d не найден.", film.getId()));
         }
-        return film;
     }
 
     @Override

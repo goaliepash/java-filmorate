@@ -22,9 +22,7 @@ public class MpaDbStorage implements MpaStorage {
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("SELECT * FROM mpa;");
         List<Mpa> mpa = new ArrayList<>();
         while (sqlRowSet.next()) {
-            Mpa currentMpa = new Mpa();
-            currentMpa.setId(sqlRowSet.getInt("id"));
-            currentMpa.setName(sqlRowSet.getString("name"));
+            Mpa currentMpa = new Mpa(sqlRowSet.getInt("id"), sqlRowSet.getString("mpa_name"));
             mpa.add(currentMpa);
         }
         return mpa;
@@ -33,9 +31,7 @@ public class MpaDbStorage implements MpaStorage {
     public Optional<Mpa> get(long id) {
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("SELECT * FROM mpa WHERE id = ?;", id);
         if (sqlRowSet.next()) {
-            Mpa mpa = new Mpa();
-            mpa.setId(sqlRowSet.getInt("id"));
-            mpa.setName(sqlRowSet.getString("name"));
+            Mpa mpa = new Mpa(sqlRowSet.getInt("id"), sqlRowSet.getString("mpa_name"));
             return Optional.of(mpa);
         } else {
             return Optional.empty();
