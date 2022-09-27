@@ -2,9 +2,8 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Status;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component("UserDbStorage")
+@Repository
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -53,14 +52,7 @@ public class UserDbStorage implements UserStorage {
             );
             set = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id = ?;", user.getId());
             set.next();
-            return User
-                    .builder()
-                    .id(set.getInt("id"))
-                    .email(set.getString("email"))
-                    .login(set.getString("login"))
-                    .name(set.getString("name"))
-                    .birthday(Objects.requireNonNull(set.getDate("birthday")).toLocalDate())
-                    .build();
+            return getUser(set);
         } else {
             throw new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", user.getId()));
         }
@@ -86,42 +78,19 @@ public class UserDbStorage implements UserStorage {
                     .build();
             users.add(user);
         }
-        set = jdbcTemplate.queryForRowSet("SELECT * FROM friendship;");
-        while (set.next()) {
-            int userId = set.getInt("user_id");
-            int friendId = set.getInt("friend_id");
-            Status status = Status.valueOf(set.getString("status"));
-            users
-                    .stream()
-                    .filter(user -> user.getId() == userId)
-                    .forEach(user -> user.addFriend(friendId, status));
-        }
         return users;
     }
 
     @Override
-    public Optional<User> get(long id) {
+    public User get(long id) {
         SqlRowSet set = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id = ?;", id);
+        User user = null;
         if (set.next()) {
-            User user = User
-                    .builder()
-                    .id(set.getInt("id"))
-                    .email(set.getString("email"))
-                    .login(set.getString("login"))
-                    .name(set.getString("name"))
-                    .birthday(Objects.requireNonNull(set.getDate("birthday")).toLocalDate())
-                    .build();
-            SqlRowSet friendsSet = jdbcTemplate.queryForRowSet("SELECT * FROM friendship WHERE user_id = ?;", id);
-            while (friendsSet.next()) {
-                user.addFriend(
-                        friendsSet.getInt("friend_id"),
-                        Status.valueOf(friendsSet.getString("status"))
-                );
-            }
-            return Optional.of(user);
-        } else {
-            return Optional.empty();
+            user = getUser(set);
         }
+        return Optional
+                .ofNullable(user)
+                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с идентификатором %d не найден.", id)));
     }
 
     @Override
@@ -133,20 +102,14 @@ public class UserDbStorage implements UserStorage {
         return true;
     }
 
-    public void addFriend(long userId, long friendId, Status status) {
-        if (contains(userId) && contains(friendId)) {
-            jdbcTemplate.update(
-                    "INSERT INTO friendship (user_id, friend_id, status) VALUES (?, ?, ?);",
-                    userId,
-                    friendId,
-                    status.name()
-            );
-        }
-    }
-
-    public void deleteFriend(long userId, long friendId) {
-        if (contains(userId) && contains(friendId)) {
-            jdbcTemplate.update("DELETE FROM friendship WHERE user_id = ? AND friend_id = ?;", userId, friendId);
-        }
+    private User getUser(SqlRowSet set) {
+        return User
+                .builder()
+                .id(set.getInt("id"))
+                .email(set.getString("email"))
+                .login(set.getString("login"))
+                .name(set.getString("name"))
+                .birthday(Objects.requireNonNull(set.getDate("birthday")).toLocalDate())
+                .build();
     }
 }

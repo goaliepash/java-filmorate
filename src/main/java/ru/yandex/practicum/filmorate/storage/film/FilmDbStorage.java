@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component("FilmDbStorage")
+@Repository
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -88,16 +88,6 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             return Optional.empty();
         }
-    }
-
-    public void addLike(long filmId, long userId) {
-        jdbcTemplate.update("INSERT INTO likes (film_id, user_id) VALUES (?, ?);", filmId, userId);
-        jdbcTemplate.update("UPDATE films SET rate = rate + 1 WHERE id = ?;", filmId);
-    }
-
-    public void removeLike(long filmId, long userId) {
-        jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?;", filmId, userId);
-        jdbcTemplate.update("UPDATE films SET rate = rate - 1 WHERE id = ?;", filmId);
     }
 
     private Film getFilm(SqlRowSet sqlRowSet) {

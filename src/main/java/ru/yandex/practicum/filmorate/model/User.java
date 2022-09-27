@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 @Builder
 @Data
@@ -24,13 +22,4 @@ public class User {
     @PastOrPresent
     @NotNull
     private LocalDate birthday;
-    private final Map<Long, Status> friends = new HashMap<>();
-
-    public void addFriend(long id, Status status) {
-        friends.put(id, status);
-    }
-
-    public void deleteFriend(long id) {
-        friends.remove(id);
-    }
 }
