@@ -70,14 +70,7 @@ public class UserDbStorage implements UserStorage {
         SqlRowSet set = jdbcTemplate.queryForRowSet("SELECT * FROM users;");
         List<User> users = new ArrayList<>();
         while (set.next()) {
-            User user = User
-                    .builder()
-                    .id(set.getInt("id"))
-                    .email(set.getString("email"))
-                    .login(set.getString("login"))
-                    .name(set.getString("name"))
-                    .birthday(Objects.requireNonNull(set.getDate("birthday")).toLocalDate())
-                    .build();
+            User user = getUser(set);
             users.add(user);
         }
         return users;
