@@ -6,15 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.controller.*;
+import ru.yandex.practicum.filmorate.exceptions.*;
 
 import javax.validation.ConstraintViolationException;
 
-@RestControllerAdvice(assignableTypes = {UserController.class, FilmController.class})
+@RestControllerAdvice(assignableTypes = {UserController.class, FilmController.class, MpaController.class, GenreController.class, FriendController.class})
 @Slf4j
 public class ErrorHandler {
 
@@ -44,6 +41,18 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> handleFilmNotFoundException(FilmNotFoundException exception) {
+        log.info(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleGenreNotFoundException(GenreNotFoundException exception) {
+        log.info(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleMpaNotFoundException(MpaNotFoundException exception) {
         log.info(exception.getMessage());
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }

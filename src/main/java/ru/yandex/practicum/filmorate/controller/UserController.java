@@ -44,28 +44,4 @@ public class UserController {
         log.info("Выполнен запрос GET /users/{}", id);
         return service.get(id);
     }
-
-    @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable long id, @PathVariable long friendId) {
-        log.info("Выполнен запрос PUT /users/{}/friends/{}", id, friendId);
-        return service.addFriend(id, friendId);
-    }
-
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable long id, @PathVariable long friendId) {
-        log.info("Выполнен запрос DELETE /users/{}/friends/{}", id, friendId);
-        return service.deleteFriend(id, friendId);
-    }
-
-    @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable long id) {
-        log.info("Выполнен запрос GET /{}/friends", id);
-        return service.getFriends(id);
-    }
-
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
-        log.info("Выполнен запрос GET /users/{}/friends/common/{}", id, otherId);
-        return service.getCommonFriends(id, otherId);
-    }
 }
